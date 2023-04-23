@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "weblog"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.95.1"
+psycopg = {extras = ["binary"], version = "^3.1.8"}
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.9"}
+asyncpg = "^0.27.0"
+uvicorn = {extras = ["standard"], version = "^0.21.1"}
+
+[tool.poetry.scripts]
+test = "tests:run"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
