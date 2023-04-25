@@ -1,0 +1,2 @@
+CREATE DATABASE weblog;
+CREATE DATABASE weblog_test;

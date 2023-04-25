@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  db:
+    build: ./db
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    ports:
+      - "5432:5432"
+  be:
+    build: ./be
+    ports:
+      - "8000:8000"
+    volumes: 
+      - type: bind
+        source: ./be/weblog
+        target: /be/weblog
+      - type: bind
+        source: ./be/tests
+        target: /be/tests
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      WATCHFILES_FORCE_POLLING: true

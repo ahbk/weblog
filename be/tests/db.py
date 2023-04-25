@@ -1,51 +1,44 @@
 import unittest
 import asyncio
-from unittest import IsolatedAsyncioTestCase
-from weblog.db.meta import async_engine
-from weblog.db.models import Base, Post
-
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy import text, select
 
-
-shared = {'resource': None}
-
-async def immediate_task():
-    print('immediate task')
-    shared['resource'] = await asyncio.sleep(0, 1)
-
-async def fast_task():
-    print('fast task')
-    shared['resource'] = await asyncio.sleep(.1, 2)
-
-async def slow_task():
-    print('slow task')
-    shared['resource'] = await asyncio.sleep(1, 3)
-
-async def task_runner():
-    await slow_task()
-    await fast_task()
-    await immediate_task()
+from weblog.db.meta import engine_test
+from weblog.db.models import Base, Post
 
 
-class TestAsyncLab(IsolatedAsyncioTestCase):
-    async def test_1(self):
-        await task_runner()
-        self.assertEqual(3, shared['resource'])
-
-@unittest.skip("temporarily disabled")
-class TestDB(IsolatedAsyncioTestCase):
-
+# reminder how async works
+class TestAsyncLab(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
-        self._async_session = async_sessionmaker(async_engine, expire_on_commit=False)
+        self.shared = {"resource": None}
+
+    async def immediate_task(self):
+        self.shared["resource"] = 1
+
+    async def fast_task(self):
+        self.shared["resource"] = await asyncio.sleep(0.1, 2)
+
+    async def slow_task(self):
+        self.shared["resource"] = await asyncio.sleep(1, 3)
+
+    async def test_how_async_works(self):
+        await asyncio.gather(self.slow_task(), self.fast_task(), self.immediate_task())
+        self.assertEqual(3, self.shared["resource"])
 
 
-    async def test_create_tables(self):
+# crud test on db
+class TestDB(unittest.IsolatedAsyncioTestCase):
+    async def asyncSetUp(self):
+        self._async_session = async_sessionmaker(engine_test, expire_on_commit=False)
 
-        async with async_engine.begin() as conn:
-            await conn.execute(text("DROP TABLE posts"))
+    async def test_crud_posts(self):
+
+        # wipe and recreate
+        async with engine_test.begin() as conn:
+            await conn.execute(text("DROP TABLE IF EXISTS posts"))
             await conn.run_sync(Base.metadata.create_all)
 
+        # add sample data
         p1 = Post(title="Hello world!", body="Lorem Ipsum...")
         p2 = Post(title="Hello again!", body="Lorem Ipsum...")
 
@@ -53,16 +46,17 @@ class TestDB(IsolatedAsyncioTestCase):
             async with session.begin():
                 session.add_all([p1, p2])
 
+        # select all
         async with self._async_session() as session:
             stmt = select(Post)
             result = await session.execute(stmt)
 
+        # p1.title
         self.assertEqual("Hello world!", result.first()[0].title)
 
-
     async def asyncTearDown(self):
-        await async_engine.dispose()
+        await engine_test.dispose()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

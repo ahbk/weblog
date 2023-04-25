@@ -1,4 +1,2 @@
-FROM postgres
-#COPY postgres.conf /etc/postgresql/postgresql.conf
-COPY db-seed-files/ /docker-entrypoint-initdb.d/
-#CMD ["-c", "config_file=/etc/postgresql/postgresql.conf"]
+FROM postgres:14.1-alpine
+COPY create_db.sql /docker-entrypoint-initdb.d/
