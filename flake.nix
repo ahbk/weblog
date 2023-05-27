@@ -13,13 +13,20 @@
 
       buildInputs = with pkgs; [
 	poetry2nix.packages.${system}.poetry
-	postgresql
+	nodejs
       ];
 
-      buildInputsApp = buildInputs ++ [ (mkPoetryApplication { projectDir = ./be; }) ];
+      buildInputsApp = buildInputs ++ [
+        (mkPoetryApplication { projectDir = ./be; })
+      ];
+
       buildInputsEnv = buildInputs ++ (with pkgs; [
 	(mkPoetryEnv { projectDir = ./be; })
 	black
+	postgresql
+	nodePackages.typescript-language-server
+	nodePackages.typescript
+	nodePackages.svelte-language-server
       ]);
     in {
       packages.${system}.default = pkgs.stdenv.mkDerivation {

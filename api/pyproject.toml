@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "weblog"
+name = "weblog-api"
 version = "0.1.0"
 description = ""
 authors = ["ahbk <alxhbk@proton.me>"]
