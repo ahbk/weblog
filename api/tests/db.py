@@ -10,7 +10,7 @@ from weblog.db.models import Base, Post
 # reminder how async works
 class TestAsyncLab(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
-        self.shared = {"resource": None}
+        self.shared = {"resource": 0}
 
     async def immediate_task(self):
         self.shared["resource"] = 1
@@ -51,8 +51,10 @@ class TestDB(unittest.IsolatedAsyncioTestCase):
             stmt = select(Post)
             result = await session.execute(stmt)
 
+        first_row = result.first()
+
         # p1.title
-        self.assertEqual("Hello world!", result.first()[0].title)
+        self.assertEqual("Hello world!", first_row[0].title if first_row else None)
 
     async def asyncTearDown(self):
         await engine_test.dispose()

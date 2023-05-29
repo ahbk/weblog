@@ -6,17 +6,18 @@ services:
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
     ports:
       - "5432:5432"
-  be:
-    build: ./be
+  api:
+    build: ./api
     ports:
       - "8000:8000"
     volumes: 
       - type: bind
-        source: ./be/weblog
-        target: /be/weblog
+        source: ./api/weblog
+        target: /api/weblog
       - type: bind
-        source: ./be/tests
-        target: /be/tests
+        source: ./api/tests
+        target: /api/tests
     environment:
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      SECRET_KEY: $SECRET_KEY
       WATCHFILES_FORCE_POLLING: true

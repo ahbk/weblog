@@ -1,27 +1,22 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    poetry2nix.url = "github:nix-community/poetry2nix";
-    poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, poetry2nix }:
+  outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
-      inherit (poetry2nix.legacyPackages.${system}) mkPoetryEnv mkPoetryApplication;
       pkgs = import nixpkgs { inherit system; };
 
       buildInputs = with pkgs; [
-	poetry2nix.packages.${system}.poetry
+        poetry
 	nodejs
       ];
 
       buildInputsApp = buildInputs ++ [
-        (mkPoetryApplication { projectDir = ./be; })
       ];
 
       buildInputsEnv = buildInputs ++ (with pkgs; [
-	(mkPoetryEnv { projectDir = ./be; })
 	black
 	postgresql
 	nodePackages.typescript-language-server

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "weblog-api"
+name = "weblog"
 version = "0.1.0"
 description = ""
 authors = ["ahbk <alxhbk@proton.me>"]
@@ -7,14 +7,15 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi = "^0.95.1"
-psycopg = {extras = ["binary"], version = "^3.1.8"}
-sqlalchemy = {extras = ["asyncio"], version = "^2.0.9"}
+fastapi = "^0.95.2"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.15"}
 asyncpg = "^0.27.0"
-uvicorn = {extras = ["standard"], version = "^0.21.1"}
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+fastapi-users = {extras = ["sqlalchemy"], version = "^11.0.0"}
 
 [tool.poetry.scripts]
-test = "tests:run"
+test = "tests.db:run"
+weblog = "weblog.main:run"
 
 [build-system]
 requires = ["poetry-core"]
