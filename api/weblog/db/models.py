@@ -1,10 +1,9 @@
 import datetime
-from typing import List
 from typing import Optional
 from typing import AsyncGenerator
 
-from sqlalchemy import ForeignKey
-from sqlalchemy import String, Text
+from sqlalchemy import Text
+from sqlalchemy import String
 from sqlalchemy import func
 
 from sqlalchemy.orm import DeclarativeBase
@@ -16,6 +15,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
+from fastapi_users_db_sqlalchemy.access_token import (
+    SQLAlchemyAccessTokenDatabase,
+    SQLAlchemyBaseAccessTokenTableUUID,
+)
 
 from weblog.db.meta import engine
 
@@ -23,8 +26,14 @@ from weblog.db.meta import engine
 class Base(DeclarativeBase):
     pass
 
+
 class User(SQLAlchemyBaseUserTableUUID, Base):
     pass
+
+
+class AccessToken(SQLAlchemyBaseAccessTokenTableUUID, Base):
+    pass
+
 
 class Post(Base):
     __tablename__ = "posts"
@@ -38,7 +47,9 @@ class Post(Base):
     def __repr__(self) -> str:
         return f"Post(id={self.id!r}, title={self.title!r}, body={self.body!r}, created={self.created!r})"
 
+
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
+
 
 async def create_db_and_tables():
     async with engine.begin() as conn:
@@ -53,3 +64,8 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, User)
 
+
+async def get_access_token_db(
+    session: AsyncSession = Depends(get_async_session),
+):
+    yield SQLAlchemyAccessTokenDatabase(session, AccessToken)

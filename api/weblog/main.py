@@ -5,12 +5,12 @@ from fastapi import Depends, FastAPI
 
 from weblog.db.models import User, create_db_and_tables
 from weblog.schemas import UserCreate, UserRead, UserUpdate
-from weblog.users import auth_backend, current_active_user, fastapi_users
+from weblog.users import auth_backend_db, current_active_user, fastapi_users
 
 app = FastAPI()
 
 app.include_router(
-    fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"]
+    fastapi_users.get_auth_router(auth_backend_db), prefix="/auth", tags=["auth"]
 )
 app.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
@@ -43,6 +43,7 @@ async def authenticated_route(user: User = Depends(current_active_user)):
 async def on_startup():
     # Not needed if you setup a migration system like Alembic
     await create_db_and_tables()
+
 
 @app.get("/")
 async def read_root():
