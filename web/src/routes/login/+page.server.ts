@@ -3,10 +3,10 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ cookies, fetch }) => {
   const response = await fetch('http://weblog.dev:8000/users/me', {
-    method: "GET",
+    method: 'GET',
     headers: {
-      'Authorization': `Bearer ${cookies.get('access_token')}`,
-    },
+      Authorization: `Bearer ${cookies.get('access_token')}`
+    }
   });
   const user = await response.json();
   return { user };
@@ -18,15 +18,15 @@ export const actions = {
     const email = data.get('email');
     const password = data.get('password');
     const response = await fetch('http://weblog.dev:8000/auth/login', {
-      method: "POST",
+      method: 'POST',
       body: new URLSearchParams({
         username: email as any,
-        password: password as any,
-      }),
+        password: password as any
+      })
     });
 
     console.log(url);
-    if(!response.ok) {
+    if (!response.ok) {
       return fail(400, { email, incorrect: true });
     }
 
@@ -41,5 +41,5 @@ export const actions = {
   },
   register: async (event) => {
     console.log(event);
-  },
+  }
 } satisfies Actions;
