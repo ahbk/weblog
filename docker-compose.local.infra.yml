@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  db:
+    build: ./db
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      SECRET_KEY: $SECRET_KEY
+    ports:
+      - "5439:5432"
