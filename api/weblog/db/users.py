@@ -8,7 +8,10 @@ from fastapi_users.authentication import (
     AuthenticationBackend,
     BearerTransport,
 )
-from fastapi_users.authentication.strategy.db import AccessTokenDatabase, DatabaseStrategy
+from fastapi_users.authentication.strategy.db import (
+    AccessTokenDatabase,
+    DatabaseStrategy,
+)
 
 from fastapi_users.db import SQLAlchemyUserDatabase
 
@@ -41,10 +44,12 @@ async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db
 
 bearer_transport = BearerTransport(tokenUrl="auth/login")
 
+
 def get_database_strategy(
     access_token_db: AccessTokenDatabase[AccessToken] = Depends(get_access_token_db),
 ) -> DatabaseStrategy:
     return DatabaseStrategy(access_token_db, lifetime_seconds=3600)
+
 
 auth_backend = AuthenticationBackend(
     name="db",

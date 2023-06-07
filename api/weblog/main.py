@@ -4,10 +4,17 @@ import uvicorn
 from fastapi import Depends, FastAPI
 
 from weblog.db.models import User, create_db_and_tables
-from weblog.schemas import UserCreate, UserRead, UserUpdate
-from weblog.users import auth_backend, current_active_user, fastapi_users
+from weblog.db.schemas import UserCreate, UserRead, UserUpdate
+from weblog.db.users import auth_backend, current_active_user, fastapi_users
+from weblog.db import routers
 
 app = FastAPI()
+
+app.include_router(
+    routers.posts,
+    prefix="/posts",
+    tags=["posts"],
+)
 
 app.include_router(
     fastapi_users.get_auth_router(auth_backend), prefix="/auth", tags=["auth"]

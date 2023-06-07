@@ -9,6 +9,17 @@ test('remarkHype', async () => {
   expect('<h1>Hello, *world</h1>\n').toBe(String(h));
 });
 
+test('login', async () => {
+    const response = await fetch('http://weblog.dev:8000/auth/login', {
+      method: 'POST',
+      body: new URLSearchParams({
+        username: 'alxhbk@proton.me',
+        password: 'secret',
+      })
+    });
+    expect(response.ok).eq(true);
+});
+
 test('Math.sqrt()', () => {
   expect(Math.sqrt(4)).toBe(2);
   expect(Math.sqrt(144)).toBe(12);

@@ -20,7 +20,7 @@ from fastapi_users_db_sqlalchemy.access_token import (
     SQLAlchemyBaseAccessTokenTableUUID,
 )
 
-from weblog.db.meta import engine
+from weblog.db.database import engine, get_async_session
 
 
 class Base(DeclarativeBase):
@@ -48,17 +48,9 @@ class Post(Base):
         return f"Post(id={self.id!r}, title={self.title!r}, body={self.body!r}, created={self.created!r})"
 
 
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-
-
 async def create_db_and_tables():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-
-
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):

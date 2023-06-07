@@ -3,8 +3,9 @@ import asyncio
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy import text, select
 
-from weblog.db.meta import engine_test
+from weblog.db.database import engine_test
 from weblog.db.models import Base, Post
+from weblog.db import crud
 
 
 # reminder how async works
@@ -32,7 +33,6 @@ class TestDB(unittest.IsolatedAsyncioTestCase):
         self._async_session = async_sessionmaker(engine_test, expire_on_commit=False)
 
     async def test_crud_posts(self):
-
         # wipe and recreate
         async with engine_test.begin() as conn:
             await conn.execute(text("DROP TABLE IF EXISTS posts"))
