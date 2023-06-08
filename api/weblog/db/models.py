@@ -1,6 +1,5 @@
 import datetime
 from typing import Optional
-from typing import AsyncGenerator
 
 from sqlalchemy import Text
 from sqlalchemy import String
@@ -9,9 +8,8 @@ from sqlalchemy import func
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
 
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase

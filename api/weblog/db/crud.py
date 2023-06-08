@@ -13,7 +13,12 @@ async def get_post(post_id: int) -> Optional[models.Post]:
 
 
 async def get_posts(skip: int, limit: int) -> Sequence[models.Post]:
-    statement = select(models.Post).offset(skip).limit(limit)
+    statement = (
+        select(models.Post)
+        .offset(skip)
+        .limit(limit)
+        .order_by(models.Post.created.desc())
+    )
     async with database.async_session() as session:
         result = await session.scalars(statement)
     return result.all()
@@ -35,7 +40,7 @@ async def delete_post(post_id: int) -> Result:
     return result
 
 
-async def update_post(post_id: int, values):
+async def update_post(post_id: int, values) -> Result:
     statement = update(models.Post).where(models.Post.id == post_id).values(**values)
     async with database.async_session() as session:
         async with session.begin():

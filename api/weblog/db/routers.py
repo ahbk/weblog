@@ -1,21 +1,25 @@
-from fastapi import APIRouter, HTTPException
-from . import schemas, crud
+from fastapi import APIRouter, Depends, HTTPException
+
+from . import schemas, crud, users, models
 
 posts = APIRouter()
 
 
-@posts.post("/create", response_model=schemas.Post, tags=["posts"])
-async def create_post(post: schemas.PostCreate):
+@posts.post("/create", response_model=schemas.PostRead, tags=["posts"])
+async def create_post(
+    post: schemas.PostCreate,
+    user: models.User = Depends(users.current_active_superuser),
+):
     return await crud.create_post(post=post)
 
 
-@posts.get("/list", response_model=list[schemas.Post], tags=["posts"])
+@posts.get("/list", response_model=list[schemas.PostRead], tags=["posts"])
 async def read_posts(skip: int = 0, limit: int = 10):
     posts = await crud.get_posts(skip=skip, limit=limit)
     return posts
 
 
-@posts.get("/get/{post_id}", response_model=schemas.Post, tags=["posts"])
+@posts.get("/get/{post_id}", response_model=schemas.PostRead, tags=["posts"])
 async def read_post(post_id: int):
     post = await crud.get_post(post_id=post_id)
     if not post:

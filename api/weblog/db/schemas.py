@@ -18,18 +18,16 @@ class UserUpdate(schemas.BaseUserUpdate):
     pass
 
 
-class PostBase(BaseModel):
+class PostCreate(BaseModel):
+    title: str
+    body: str
+
+
+class PostRead(BaseModel):
+    id: int
     title: str
     body: str
     created: Optional[datetime.datetime]
-
-
-class PostCreate(PostBase):
-    pass
-
-
-class Post(PostBase):
-    id: Optional[int]
 
     class Config:
         orm_mode = True
