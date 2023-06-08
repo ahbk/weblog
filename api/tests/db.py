@@ -3,9 +3,8 @@ import asyncio
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy import text, select
 
-from weblog.db.database import engine_test
+from weblog.db.meta import engine_test
 from weblog.db.models import Base, Post
-from weblog.db import crud
 
 
 # reminder how async works
