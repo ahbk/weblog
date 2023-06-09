@@ -1,7 +1,8 @@
 import uuid
 import os
 import contextlib
-from typing import Optional, EmailStr
+from typing import Optional
+from pydantic import EmailStr
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
