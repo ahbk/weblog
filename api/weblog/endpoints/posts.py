@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import schemas, crud, users, models, meta
+from weblog.db import schemas, crud, users, models, meta
 
-posts = APIRouter()
+router = APIRouter()
 
 
-@posts.post("/create", response_model=schemas.PostRead, tags=["posts"])
+@router.post("/create", response_model=schemas.PostRead, tags=["posts"])
 async def create_post(
     post: schemas.PostCreate,
     user: models.User = Depends(users.current_active_superuser),
@@ -15,7 +15,7 @@ async def create_post(
     return await crud.create_post(session, post=post, author_id=user.id)
 
 
-@posts.get("/list", response_model=list[schemas.PostRead], tags=["posts"])
+@router.get("/list", response_model=list[schemas.PostRead], tags=["posts"])
 async def read_posts(
     skip: int = 0,
     limit: int = 10,
@@ -25,7 +25,7 @@ async def read_posts(
     return posts
 
 
-@posts.get("/get/{post_id}", response_model=schemas.PostRead, tags=["posts"])
+@router.get("/get/{post_id}", response_model=schemas.PostRead, tags=["posts"])
 async def read_post(
     post_id: int, session: AsyncSession = Depends(meta.get_async_session)
 ):
@@ -35,14 +35,14 @@ async def read_post(
     return post
 
 
-@posts.delete("/delete/{post_id}", tags=["posts"])
+@router.delete("/delete/{post_id}", tags=["posts"])
 async def delete_post(
     post_id: int, session: AsyncSession = Depends(meta.get_async_session)
 ):
     return await crud.delete_post(session, post_id=post_id)
 
 
-@posts.patch("/update/{post_id}", tags=["posts"])
+@router.patch("/update/{post_id}", tags=["posts"])
 async def update_post(
     post_id: int,
     post: schemas.PostUpdate,

@@ -1,49 +1,27 @@
 from typing import Union
 import uvicorn
-
-from fastapi import Depends, FastAPI
-
-from weblog.db.models import User
-from weblog.db.schemas import UserCreate, UserRead, UserUpdate
-from weblog.db.users import auth_backend, current_active_user, fastapi_users
-from weblog.db import routers
+from fastapi import FastAPI
+from weblog.endpoints import users, posts
 
 app = FastAPI()
 
 app.include_router(
-    routers.posts,
+    posts.router,
     prefix="/posts",
     tags=["posts"],
 )
 
 app.include_router(
-    fastapi_users.get_auth_router(auth_backend), prefix="/auth", tags=["auth"]
-)
-app.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
+    users.router_auth,
     prefix="/auth",
     tags=["auth"],
-)
-app.include_router(
-    fastapi_users.get_reset_password_router(),
-    prefix="/auth",
-    tags=["auth"],
-)
-app.include_router(
-    fastapi_users.get_verify_router(UserRead),
-    prefix="/auth",
-    tags=["auth"],
-)
-app.include_router(
-    fastapi_users.get_users_router(UserRead, UserUpdate),
-    prefix="/users",
-    tags=["users"],
 )
 
-
-@app.get("/authenticated-route")
-async def authenticated_route(user: User = Depends(current_active_user)):
-    return {"message": f"Hello {user.email}!"}
+app.include_router(
+    users.router_user,
+    prefix="/user",
+    tags=["user"],
+)
 
 
 @app.get("/")

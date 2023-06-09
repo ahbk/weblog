@@ -1,10 +1,13 @@
 import unittest
 import asyncio
-from sqlalchemy.ext.asyncio import async_sessionmaker
-from sqlalchemy import text, select
+from sqlalchemy import select
+from pydantic import EmailStr
 
-from weblog.db.meta import engine_test
-from weblog.db.models import Base, Post
+from weblog.db import meta, models, users
+
+
+def test_test():
+    assert True
 
 
 # reminder how async works
@@ -29,25 +32,30 @@ class TestAsyncLab(unittest.IsolatedAsyncioTestCase):
 # crud test on db
 class TestDB(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
-        self._async_session = async_sessionmaker(engine_test, expire_on_commit=False)
+        self.session = meta.async_session_test
 
     async def test_crud_posts(self):
         # wipe and recreate
-        async with engine_test.begin() as conn:
-            await conn.execute(text("DROP TABLE IF EXISTS posts"))
-            await conn.run_sync(Base.metadata.create_all)
+        async with meta.engine_test.begin() as conn:
+            await conn.run_sync(meta.Base.metadata.drop_all)
+            await conn.run_sync(meta.Base.metadata.create_all)
+
+        async with self.session() as session:
+            user = await users.create_user(session, EmailStr("a@a.a"), "a", False)
+
+        assert user is not None
 
         # add sample data
-        p1 = Post(title="Hello world!", body="Lorem Ipsum...")
-        p2 = Post(title="Hello again!", body="Lorem Ipsum...")
+        p1 = models.Post(title="Hello world!", body="Lorem Ipsum...", author_id=user.id)
+        p2 = models.Post(title="Hello again!", body="Lorem Ipsum...", author_id=user.id)
 
-        async with self._async_session() as session:
+        async with self.session() as session:
             async with session.begin():
                 session.add_all([p1, p2])
 
         # select all
-        async with self._async_session() as session:
-            stmt = select(Post)
+        async with self.session() as session:
+            stmt = select(models.Post)
             result = await session.execute(stmt)
 
         first_row = result.first()
@@ -56,7 +64,7 @@ class TestDB(unittest.IsolatedAsyncioTestCase):
         self.assertEqual("Hello world!", first_row[0].title if first_row else None)
 
     async def asyncTearDown(self):
-        await engine_test.dispose()
+        await meta.engine_test.dispose()
 
 
 if __name__ == "__main__":
