@@ -27,7 +27,8 @@ class PostRead(BaseModel):
     id: int
     title: str
     body: str
-    created: Optional[datetime.datetime]
+    created: datetime.datetime
+    author: UserRead
 
     class Config:
         orm_mode = True
