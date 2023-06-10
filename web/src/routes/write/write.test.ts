@@ -8,4 +8,3 @@ test('remarkHype', async () => {
   const h = await unified().use(remarkParse).use(remarkHtml).process(md);
   expect('<h1>Hello, <em>world</em></h1>\n').toBe(String(h));
 });
-

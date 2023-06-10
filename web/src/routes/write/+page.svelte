@@ -13,7 +13,7 @@
     </label>
     <label>
       Text
-      <textarea name="title" id="simplemde"></textarea>
+      <textarea name="title" id="simplemde" />
     </label>
   </form>
 </div>
