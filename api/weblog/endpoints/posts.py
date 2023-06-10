@@ -37,7 +37,8 @@ async def read_post(
 
 @router.delete("/delete/{post_id}", tags=["posts"])
 async def delete_post(
-    post_id: int, session: AsyncSession = Depends(meta.get_async_session),
+    post_id: int,
+    session: AsyncSession = Depends(meta.get_async_session),
     _: models.User = Depends(users.current_active_superuser),
 ):
     return await crud.delete_post(session, post_id=post_id)
