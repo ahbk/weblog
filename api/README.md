@@ -6,11 +6,17 @@
 * npm
 
 ## Run
-```poetry run weblog```
+```
+poetry run weblog
+```
 
 ## Database
 Create a new revision:
-```alembic revision --autogenerate -m "summary of changes"```
+```
+alembic revision --autogenerate -m "summary of changes"
+```
 
 Implement revisions:
-```alembic upgrade head```
+```
+alembic upgrade head
+```
