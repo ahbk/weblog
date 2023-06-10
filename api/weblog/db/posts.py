@@ -1,13 +1,17 @@
 from typing import Sequence, Optional
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from . import models, schemas
 
 
 async def get(session: AsyncSession, post_id: int) -> Optional[models.Post]:
     statement = (
-        sa.select(models.Post).join(models.Post.author).where(models.Post.id == post_id)
+        sa.select(models.Post)
+           .join(models.Post.author)
+           .where(models.Post.id == post_id)
+           .options(selectinload(models.Post.author))
     )
     result = await session.scalars(statement)
     return result.first()
@@ -19,6 +23,7 @@ async def list(session: AsyncSession, skip: int, limit: int) -> Sequence[models.
         .offset(skip)
         .limit(limit)
         .order_by(models.Post.created.desc())
+        .options(selectinload(models.Post.author))
     )
     result = await session.scalars(statement)
     return result.all()
