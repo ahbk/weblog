@@ -12,13 +12,13 @@ app.include_router(
 )
 
 app.include_router(
-    users.router_auth,
+    users.auth_router,
     prefix="/auth",
     tags=["auth"],
 )
 
 app.include_router(
-    users.router_user,
+    users.user_router,
     prefix="/user",
     tags=["user"],
 )
