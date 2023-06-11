@@ -1,8 +1,9 @@
 import argparse
 import asyncio
+
 from pydantic import EmailStr
 
-from weblog.db import users, meta, models
+from weblog.db import meta, models, users
 
 parser = argparse.ArgumentParser(description="Create a user")
 

@@ -1,8 +1,8 @@
-from typing import AsyncGenerator
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 import os
+from typing import AsyncGenerator
+
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import declarative_base
 
 port = os.getenv("POSTGRES_PORT", "5432")
 user = os.getenv("POSTGRES_USER", "weblog")

@@ -1,7 +1,8 @@
-import unittest
 import asyncio
-from sqlalchemy import select
+import unittest
+
 from pydantic import EmailStr
+from sqlalchemy import select
 
 from weblog.db import meta, models, users
 

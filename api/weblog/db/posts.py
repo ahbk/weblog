@@ -1,4 +1,5 @@
-from typing import Sequence, Optional
+from typing import Optional, Sequence
+
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -9,9 +10,9 @@ from . import models, schemas
 async def get(session: AsyncSession, post_id: int) -> Optional[models.Post]:
     statement = (
         sa.select(models.Post)
-           .join(models.Post.author)
-           .where(models.Post.id == post_id)
-           .options(selectinload(models.Post.author))
+        .join(models.Post.author)
+        .where(models.Post.id == post_id)
+        .options(selectinload(models.Post.author))
     )
     result = await session.scalars(statement)
     return result.first()

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from weblog.db import schemas, posts, users, models, meta
+from weblog.db import meta, models, posts, schemas, users
 
 router = APIRouter()
 

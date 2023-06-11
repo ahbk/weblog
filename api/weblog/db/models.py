@@ -1,19 +1,10 @@
 import datetime
-from typing import Optional, List
-
-from sqlalchemy import String
-from sqlalchemy import Text
-from sqlalchemy import ForeignKey
-from sqlalchemy import func
-
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
+from typing import List, Optional
 
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID
-from fastapi_users_db_sqlalchemy.access_token import (
-    SQLAlchemyBaseAccessTokenTableUUID,
-)
+from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyBaseAccessTokenTableUUID
+from sqlalchemy import ForeignKey, String, Text, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from weblog.db import meta
 

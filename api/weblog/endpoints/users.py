@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter
+from fastapi import APIRouter, Depends
 
 from weblog.db.models import User
 from weblog.db.schemas import UserCreate, UserRead, UserUpdate

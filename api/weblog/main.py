@@ -1,7 +1,9 @@
 from typing import Union
+
 import uvicorn
 from fastapi import FastAPI
-from weblog.endpoints import users, posts
+
+from weblog.endpoints import posts, users
 
 app = FastAPI()
 

@@ -1,30 +1,22 @@
-from pydantic import EmailStr
 import contextlib
-import uuid
 import os
+import uuid
 from typing import Optional
 
 from fastapi import Depends, Request
-from fastapi_users import BaseUserManager
-from fastapi_users import UUIDIDMixin
-from fastapi_users import FastAPIUsers
-from fastapi_users.authentication import (
-    AuthenticationBackend,
-    BearerTransport,
-)
+from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
+from fastapi_users.authentication import AuthenticationBackend, BearerTransport
 from fastapi_users.authentication.strategy.db import (
     AccessTokenDatabase,
     DatabaseStrategy,
 )
-
 from fastapi_users.db import SQLAlchemyUserDatabase
-from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyAccessTokenDatabase
-
 from fastapi_users.exceptions import UserAlreadyExists
-
+from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyAccessTokenDatabase
+from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from weblog.db import models, meta, users, schemas
+from weblog.db import meta, models, schemas, users
 
 SECRET = os.environ["SECRET_KEY"]
 
