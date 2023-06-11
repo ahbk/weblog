@@ -10,6 +10,7 @@ from weblog.db import meta
 
 
 class User(SQLAlchemyBaseUserTableUUID, meta.Base):
+    display_name: Mapped[Optional[str]] = mapped_column(String(30))
     posts: Mapped[List["Post"]] = relationship(
         back_populates="author",
     )
