@@ -1,0 +1,85 @@
+@import '@fontsource/source-sans-pro';
+
+:root {
+  --font-body: 'Source Sans Pro', sans-serif;
+  --color-bg-0: rgb(255, 255, 172);
+  --color-bg-1: rgb(224, 255, 172);
+  --color-bg-2: rgb(255, 224, 172);
+  font-family: var(--font-body);
+  color: rgb(72, 32, 64);
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background-attachment: fixed;
+  background-color: var(--color-bg-1);
+  background-size: 100vw 100vh;
+  background-image: radial-gradient(
+      50% 50% at 50% 50%,
+      rgba(255, 255, 255, 0.75) 0%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    linear-gradient(180deg, var(--color-bg-0) 0%, var(--color-bg-1) 15%, var(--color-bg-2) 50%);
+}
+
+.weblog {
+  display: flex;
+  flex-flow: column;
+  height: 100vh;
+}
+
+.top {
+  text-align: center;
+}
+
+.post {
+  position: relative;
+  display: inline-block;
+  padding: 1em;
+  margin: 1em;
+  border: 0.1em solid;
+  border-color: var(--color-bg-2);
+  border-radius: 1em;
+  background-color: white;
+}
+
+.post-title {
+  margin-top: 0;
+  font-size: 1em;
+}
+
+.end-of-posts {
+  color: rgb(128, 64, 64);
+  text-align: center;
+  margin-bottom: 50%;
+}
+
+.feed-surface {
+  flex: 1;
+  overflow: scroll;
+}
+
+.feed {
+}
+
+.login {
+  position: absolute;
+  z-index: 1;
+  background: white;
+  display: inline-block;
+  border: 0.1em solid black;
+  padding: 1em;
+}
+
+.search-bar {
+  display: inline;
+}
+
+.user-bar {
+  position: relative;
+  display: inline;
+}

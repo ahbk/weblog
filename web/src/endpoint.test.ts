@@ -1,4 +1,6 @@
 import { expect, test } from 'vitest';
+import { user, update_user } from './stores/user';
+import { get } from 'svelte/store';
 
 interface LooseObject {
   [key: string]: any;
@@ -14,7 +16,14 @@ test('login', async () => {
     })
   });
   expect(response.ok).eq(true);
-  data.user_token = (await response.json()).access_token;
+
+  const access_token = (await response.json()).access_token;
+  user.set({ access_token: access_token });
+});
+
+test('get user', async () => {
+  await update_user();
+  expect(get(user).email).toBe('alxhbk@proton.me');
 });
 
 test('create post unauthorized', async () => {
@@ -45,7 +54,7 @@ test('create post', async () => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${data.user_token}`
+      Authorization: `Bearer ${get(user).access_token}`
     },
     body: JSON.stringify(post)
   });
@@ -72,9 +81,9 @@ test('get post list', async () => {
       'Content-Type': 'application/json'
     }
   });
-  const post = await response.json();
+  const posts = await response.json();
   expect(response.ok).toBe(true);
-  expect(post[0].title).toBe('hello');
+  expect(posts[0].title).toBe('hello');
 });
 
 test('delete post unauthorized', async () => {
@@ -92,7 +101,7 @@ test('delete post', async () => {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${data.user_token}`
+      Authorization: `Bearer ${get(user).access_token}`
     }
   });
   expect((await response.json()).rowcount).toBe(1);
