@@ -1,6 +1,4 @@
 import { expect, test } from 'vitest';
-import { user, update_user } from './stores/user';
-import { get } from 'svelte/store';
 
 interface LooseObject {
   [key: string]: any;
@@ -8,22 +6,25 @@ interface LooseObject {
 const data: LooseObject = {};
 
 test('login', async () => {
-  const response = await fetch('http://weblog.dev:8000/auth/login', {
+  const response = await fetch('http://weblog.local:8000/login', {
     method: 'POST',
     body: new URLSearchParams({
       username: 'alxhbk@proton.me',
       password: 'secret'
     })
   });
+  console.log((await response.text()));
   expect(response.ok).eq(true);
-
-  const access_token = (await response.json()).access_token;
-  user.set({ access_token: access_token });
+  data.access_token = response.headers.get('Set-Cookie');
 });
 
 test('get user', async () => {
-  await update_user();
-  expect(get(user).email).toBe('alxhbk@proton.me');
+  const response = await fetch('http://weblog.local:8000/user/me', {
+    headers: {
+      'Cookie': data.access_token,
+    }
+  });
+  expect(response.ok).toBe(true);
 });
 
 test('create post unauthorized', async () => {
@@ -33,7 +34,7 @@ test('create post unauthorized', async () => {
     body: 'world',
     created: null
   };
-  const response_create = await fetch('http://weblog.dev:8000/posts/create', {
+  const response_create = await fetch('http://weblog.local:8000/posts/create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -50,11 +51,11 @@ test('create post', async () => {
     body: 'world',
     created: null
   };
-  const response_create = await fetch('http://weblog.dev:8000/posts/create', {
+  const response_create = await fetch('http://weblog.local:8000/posts/create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${get(user).access_token}`
+      'Cookie': data.access_token,
     },
     body: JSON.stringify(post)
   });
@@ -63,7 +64,7 @@ test('create post', async () => {
 });
 
 test('get post', async () => {
-  const response = await fetch(`http://weblog.dev:8000/posts/get/${data.post_id}`, {
+  const response = await fetch(`http://weblog.local:8000/posts/get/${data.post_id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -75,7 +76,7 @@ test('get post', async () => {
 });
 
 test('get post list', async () => {
-  const response = await fetch(`http://weblog.dev:8000/posts/list`, {
+  const response = await fetch(`http://weblog.local:8000/posts/list`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -87,7 +88,7 @@ test('get post list', async () => {
 });
 
 test('delete post unauthorized', async () => {
-  const response = await fetch(`http://weblog.dev:8000/posts/delete/${data.post_id}`, {
+  const response = await fetch(`http://weblog.local:8000/posts/delete/${data.post_id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
@@ -97,11 +98,11 @@ test('delete post unauthorized', async () => {
 });
 
 test('delete post', async () => {
-  const response = await fetch(`http://weblog.dev:8000/posts/delete/${data.post_id}`, {
+  const response = await fetch(`http://weblog.local:8000/posts/delete/${data.post_id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${get(user).access_token}`
+      'Cookie': data.access_token,
     }
   });
   expect((await response.json()).rowcount).toBe(1);
