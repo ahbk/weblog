@@ -31,7 +31,7 @@ class PostRead(BaseModel):
     author: UserRead
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class PostUpdate(BaseModel):
