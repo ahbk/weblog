@@ -7,15 +7,15 @@ from pydantic import BaseModel
 
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
-    pass
+    display_name: Optional[str]
 
 
 class UserCreate(schemas.BaseUserCreate):
-    pass
+    display_name: Optional[str] = None
 
 
 class UserUpdate(schemas.BaseUserUpdate):
-    pass
+    display_name: Optional[str]
 
 
 class PostCreate(BaseModel):

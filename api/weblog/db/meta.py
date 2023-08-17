@@ -4,13 +4,10 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 
-port = os.getenv("POSTGRES_PORT", "5432")
-user = os.getenv("POSTGRES_USER", "weblog")
-host = os.getenv("POSTGRES_HOST", "localhost")
-password = os.environ["POSTGRES_PASSWORD"]
+from weblog.config import settings
 
-url = f"postgresql+asyncpg://{user}:{password}@{host}:{port}/weblog"
-url_test = f"postgresql+asyncpg://{user}:{password}@{host}:{port}/weblog_test"
+url = f"postgresql+asyncpg://{settings.db_uri}/weblog"
+url_test = f"postgresql+asyncpg://{settings.db_uri}/weblog_test"
 
 engine = create_async_engine(url)
 engine_test = create_async_engine(url_test, echo=True)

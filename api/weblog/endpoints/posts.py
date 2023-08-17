@@ -9,7 +9,7 @@ router = APIRouter()
 @router.post("/create", response_model=schemas.PostRead, tags=["posts"])
 async def create(
     post: schemas.PostCreate,
-    user: models.User = Depends(users.current_active_superuser),
+    user: models.User = Depends(users.active_verified_user),
     session: AsyncSession = Depends(meta.get_async_session),
 ):
     return await posts.create(session, post=post, author_id=user.id)
@@ -37,7 +37,7 @@ async def get(post_id: int, session: AsyncSession = Depends(meta.get_async_sessi
 async def delete(
     post_id: int,
     session: AsyncSession = Depends(meta.get_async_session),
-    _: models.User = Depends(users.current_active_superuser),
+    _: models.User = Depends(users.active_verified_user),
 ):
     return await posts.delete(session, post_id=post_id)
 
@@ -46,7 +46,7 @@ async def delete(
 async def update(
     post_id: int,
     post: schemas.PostUpdate,
-    _: models.User = Depends(users.current_active_superuser),
+    _: models.User = Depends(users.active_verified_user),
     session: AsyncSession = Depends(meta.get_async_session),
 ):
     values = post.dict(exclude_unset=True)

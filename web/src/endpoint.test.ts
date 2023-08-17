@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest';
+import { API_HOST } from '$env/static/private';
 
 interface LooseObject {
   [key: string]: any;
@@ -6,15 +7,27 @@ interface LooseObject {
 const data: LooseObject = {};
 
 test('login', async () => {
-  const response = await fetch('http://weblog.dev:8000/auth/login', {
+  const response = await fetch(`https://${API_HOST}/auth/login`, {
     method: 'POST',
     body: new URLSearchParams({
-      username: 'alxhbk@proton.me',
-      password: 'secret'
+      username: 'a@a.a',
+      password: 'a'
     })
   });
   expect(response.ok).eq(true);
   data.user_token = (await response.json()).access_token;
+});
+
+test('get user', async () => {
+  const response = await fetch(`https://${API_HOST}/users/me`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${data.user_token}`
+    }
+  });
+  expect(response.ok).eq(true);
+  expect((await response.json()).email).eq('a@a.a');
 });
 
 test('create post unauthorized', async () => {
@@ -24,7 +37,7 @@ test('create post unauthorized', async () => {
     body: 'world',
     created: null
   };
-  const response_create = await fetch('http://weblog.dev:8000/posts/create', {
+  const response_create = await fetch(`https://${API_HOST}/posts/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -41,7 +54,7 @@ test('create post', async () => {
     body: 'world',
     created: null
   };
-  const response_create = await fetch('http://weblog.dev:8000/posts/create', {
+  const response_create = await fetch(`https://${API_HOST}/posts/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -54,7 +67,7 @@ test('create post', async () => {
 });
 
 test('get post', async () => {
-  const response = await fetch(`http://weblog.dev:8000/posts/get/${data.post_id}`, {
+  const response = await fetch(`https://${API_HOST}/posts/get/${data.post_id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -66,7 +79,7 @@ test('get post', async () => {
 });
 
 test('get post list', async () => {
-  const response = await fetch(`http://weblog.dev:8000/posts/list`, {
+  const response = await fetch(`https://${API_HOST}/posts/list`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -78,7 +91,7 @@ test('get post list', async () => {
 });
 
 test('delete post unauthorized', async () => {
-  const response = await fetch(`http://weblog.dev:8000/posts/delete/${data.post_id}`, {
+  const response = await fetch(`https://${API_HOST}/posts/delete/${data.post_id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
@@ -88,7 +101,7 @@ test('delete post unauthorized', async () => {
 });
 
 test('delete post', async () => {
-  const response = await fetch(`http://weblog.dev:8000/posts/delete/${data.post_id}`, {
+  const response = await fetch(`https://${API_HOST}/posts/delete/${data.post_id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

@@ -1,6 +1,6 @@
 import contextlib
-import os
 import uuid
+import requests
 from typing import Optional
 
 from fastapi import Depends, Request
@@ -17,8 +17,7 @@ from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from weblog.db import meta, models, schemas, users
-
-SECRET = os.environ["SECRET_KEY"]
+from weblog.config import settings
 
 
 async def get_user_db(session: AsyncSession = Depends(meta.get_async_session)):
@@ -32,8 +31,8 @@ async def get_access_token_db(
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[models.User, uuid.UUID]):
-    reset_password_token_secret = SECRET
-    verification_token_secret = SECRET
+    reset_password_token_secret = settings.secret_key
+    verification_token_secret = settings.secret_key
 
     async def on_after_register(
         self, user: models.User, request: Optional[Request] = None
@@ -49,6 +48,22 @@ class UserManager(UUIDIDMixin, BaseUserManager[models.User, uuid.UUID]):
         self, user: models.User, token: str, request: Optional[Request] = None
     ):
         print(f"Verification requested for user {user.id}. Verification token: {token}")
+        send_verification_mail(token)
+
+
+def send_verification_mail(token):
+    result = requests.post(
+        f"https://api.mailgun.net/v3/{settings.mail_domain}/messages",
+        auth=("api", settings.mail_api_key),
+        data={
+            "from": f"Excited User <mailgun@{settings.mail_domain}>",
+            "to": ["alexander.holmback@gmail.com"],
+            "subject": "Hello",
+            "text": f"Verify your account! https://{settings.web_host}/auth?verification_token={token}",
+        },
+    )
+    print(result)
+    return result
 
 
 async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
@@ -72,22 +87,32 @@ auth_backend = AuthenticationBackend(
 fastapi_users = FastAPIUsers[models.User, uuid.UUID](
     users.get_user_manager, [users.auth_backend]
 )
-current_active_user = fastapi_users.current_user(active=True)
-current_active_superuser = fastapi_users.current_user(active=True, superuser=True)
+active_user = fastapi_users.current_user(active=True)
+active_verified_user = fastapi_users.current_user(active=True, verified=True)
+active_superuser = fastapi_users.current_user(active=True, superuser=True)
 
 get_user_db_context = contextlib.asynccontextmanager(users.get_user_db)
 get_user_manager_context = contextlib.asynccontextmanager(users.get_user_manager)
 
 
 async def create_user(
-    session: AsyncSession, email: EmailStr, password: str, is_superuser: bool
+    session: AsyncSession,
+    email: EmailStr,
+    password: str,
+    display_name: str,
+    is_superuser: bool,
+    is_verified: bool,
 ) -> Optional[models.User]:
     try:
         async with get_user_db_context(session) as user_db:
             async with get_user_manager_context(user_db) as user_manager:
                 user = await user_manager.create(
                     schemas.UserCreate(
-                        email=email, password=password, is_superuser=is_superuser
+                        email=email,
+                        password=password,
+                        display_name=display_name,
+                        is_superuser=is_superuser,
+                        is_verified=is_verified,
                     )
                 )
                 return user
